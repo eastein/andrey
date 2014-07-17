@@ -7,9 +7,9 @@ import optparse
 import random
 import andrey
 
+
+#p=1
 p = 0.008
-
-
 
 class MarkovBot(mediorc.IRC) :
 	def __init__(self, *a, **kw) :
@@ -21,7 +21,7 @@ class MarkovBot(mediorc.IRC) :
 		txt = e.arguments()[0]
 
 		if random.random() < p :
-			r = self.m.choose(txt, continued=10))
+			r = self.m.choose(txt, continued=10)
 			if r :
 				self.connection.privmsg(chan, r)
 		
