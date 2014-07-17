@@ -79,4 +79,6 @@ class Markov(object) :
 		return self.detokenize(self._choose(*a, **kw))
 
 	def detokenize(self, tokens) :
+		if tokens is None :
+			return None
 		return ' '.join(list(tokens))
