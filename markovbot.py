@@ -9,7 +9,7 @@ import andrey
 import msgpack
 import os.path
 
-SAVE_WINDOW = 10.0
+SAVE_WINDOW = 300.0
 
 
 def wordprocess(s, repl=None):
