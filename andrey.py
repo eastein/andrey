@@ -95,7 +95,7 @@ class Markov(object):
         return o
 
     def tokenize(self, tokens):
-        if tokens.__class__ == str:
+        if isinstance(tokens, basestring) :
             tokens = tuple(tokens.split(' '))
         return tokens
 
