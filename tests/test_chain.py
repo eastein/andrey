@@ -3,6 +3,7 @@ import andrey
 import pprint
 import msgpack
 
+
 class MarkovTests(unittest.TestCase):
 
     def test_1chain(self):

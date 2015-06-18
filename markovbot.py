@@ -99,13 +99,13 @@ class MarkovBot(mediorc.IRC):
                     do_send = True
                     break
             return do_send
-        
+
         if random.random() < self.ratio:
             if self.word_filter:
                 r = generate(txt, attempts=50, acceptance_test=filter_test)
             else:
                 r = generate(txt)
-            
+
             if r:
                 r = output_filtering(r)
                 self.connection.privmsg(chan, r)
@@ -115,6 +115,7 @@ class MarkovBot(mediorc.IRC):
 
 
 class MarkovThread(mediorc.IRCThread):
+
     def __init__(self, args, filename=None, ratio=None, word_replace=None, word_filter=None):
         self.a = args
         self.filename = filename
@@ -152,15 +153,16 @@ if __name__ == '__main__':
                       help='Comma separated (no whitespace) list of words to replace every word with (except for punctuation, plurals, gerunds...')
     parser.add_option('--word-filter', dest='word_filter', default=None,
                       help='Comma separated (no whitespace) list of words to filter by; only talk if one of these words is in the text the bot would say.')
-    parser.add_option('--replace-probability', dest='replace_probability', default=1.0, help="When word replace in use, replace words with only this probability.")
+    parser.add_option('--replace-probability', dest='replace_probability', default=1.0,
+                      help="When word replace in use, replace words with only this probability.")
 
     (options, args) = parser.parse_args()
 
     word_replace = options.word_replace
     if word_replace is not None:
         word_replace = {
-            'w' : word_replace.split(','),
-            'p' : float(options.replace_probability)
+            'w': word_replace.split(','),
+            'p': float(options.replace_probability)
         }
     word_filter = options.word_filter
     if word_filter is not None:
