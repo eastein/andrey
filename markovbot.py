@@ -116,11 +116,7 @@ class MarkovThread(mediorc.IRCThread):
         self.word_replace = word_replace
         self.word_filter = word_filter
 
-        load = False
-        if filename:
-            if os.path.exists(filename):
-                load = True
-        if not load:
+        if filename is None:
             self.m = persist.PersistedMarkov(2, 3)
         else:
             self.m = persist.PersistedMarkov.restore(filename, 2, 3)
