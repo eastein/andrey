@@ -5,7 +5,7 @@ import mediorc
 import time
 import optparse
 import random
-import andrey
+import persist
 import msgpack
 import os.path
 
@@ -42,29 +42,23 @@ class MarkovBot(mediorc.IRC):
         self.m = m
 
     def save_markov(self):
-        # nah
+        """
+        If the markov chain has not been saved for SAVE_WINDOW time, save it.
+        If no filename is configured on the bot, do not save.
+        :return: None
+        """
         if not self.filename:
             return
 
         now = time.time()
 
-        if not hasattr(self.m, 'saved_at'):
-            self.m.saved_at = now
-        elif self.m.saved_at < (now - SAVE_WINDOW):
-            tfn = '%s.inprog-%d' % (self.filename, random.randint(1, 1000000))
-            fh = open(tfn, 'w')
-            ok = False
-            try:
-                msgpack.dump(self.m.todict(), fh)
-                ok = True
-            finally:
-                fh.close()
+        if not hasattr(self, 'saved_at'):
+            self.saved_at = now
+        elif self.saved_at < (now - SAVE_WINDOW):
+            self.m.save(self.filename)
+            self.saved_at = now
 
-            if ok:
-                if os.path.exists(self.filename):
-                    os.rename(self.filename, '%s.bak' % self.filename)
-                os.rename(tfn, self.filename)
-                self.m.saved_at = now
+        self.saved_at = now
 
     def on_pubmsg(self, c, e):
         chan = e.target
@@ -82,6 +76,7 @@ class MarkovBot(mediorc.IRC):
 
 
 class MarkovThread(mediorc.IRCThread):
+
     def __init__(self, args, filename=None, ratio=None, word_replace=None):
         self.a = args
         self.filename = filename
@@ -93,9 +88,9 @@ class MarkovThread(mediorc.IRCThread):
             if os.path.exists(filename):
                 load = True
         if not load:
-            self.m = andrey.Markov(2, 3)
+            self.m = persist.PersistedMarkov(2, 3)
         else:
-            self.m = andrey.Markov.fromdict(msgpack.load(open(filename)))
+            self.m = persist.PersistedMarkov.restore(filename, 2, 3)
 
         mediorc.IRCThread.__init__(self)
 

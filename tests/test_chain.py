@@ -3,6 +3,7 @@ import andrey
 import pprint
 import msgpack
 
+
 class MarkovTests(unittest.TestCase):
 
     def test_1chain(self):
@@ -38,3 +39,7 @@ class MarkovTests(unittest.TestCase):
         m.teach('alpha beta conky delta')
         m2 = andrey.Markov.fromdict(msgpack.loads(msgpack.dumps(m.todict())))
         self.assertEquals('beta conky', m2.choose('alpha', continued=1))
+
+
+class PersistTests(unittest.TestCase):
+    pass
