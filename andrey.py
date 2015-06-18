@@ -2,6 +2,7 @@ import random
 
 
 class ChainLink(object):
+    __slots__ = ["n", "tokens"]
 
     def __init__(self, tokens, n=0):
         self.n = n
@@ -15,6 +16,7 @@ class ChainLink(object):
 
 
 class Chain(object):
+    __slots__ = ["n", "links"]
 
     def __init__(self):
         self.n = 0
