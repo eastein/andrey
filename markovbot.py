@@ -109,6 +109,7 @@ class MarkovBot(mediorc.IRC):
 
 
 class MarkovThread(mediorc.IRCThread):
+
     def __init__(self, args, filename=None, ratio=None, word_replace=None, word_filter=None):
         self.a = args
         self.filename = filename

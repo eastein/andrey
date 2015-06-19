@@ -97,11 +97,21 @@ class Markov(object):
         return o
 
     def tokenize(self, tokens):
+        """
+        Given a string or a tuple of tokens, if it's a string split it by spaces.
+        :param tokens:
+        :return: tuple of strings
+        """
         if isinstance(tokens, basestring):
             tokens = tuple(tokens.split(' '))
         return tokens
 
     def teach(self, tokens):
+        """
+        Given some text or a tokenized sequence, teach the markov chain.
+        :param tokens: either a string or a tuple of strings. If given as a string, it will be tokenized and then used.
+        :return: None
+        """
         tokens = self.tokenize(tokens)
         for i in range(len(tokens) + 1 - self.m - self.n):
             mi = i

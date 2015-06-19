@@ -4,6 +4,20 @@ import msgpack
 import andrey
 
 
+class PersistenceError(Exception):
+
+    """
+    Raised in cases where persistence experienced a problem.
+    """
+
+
+class NoSuchFileError(Exception):
+
+    """
+    Raised when you attempt to restore and did not provide default
+    """
+
+
 class PersistedMarkov(andrey.Markov):
 
     def save(self, filename):
@@ -29,6 +43,8 @@ class PersistedMarkov(andrey.Markov):
         :return: andrey.Markov.PersistedMarkov instance
         """
         if not os.path.exists(filename):
+            if not a:
+                raise NoSuchFileError("You attempted to restore and did not supply parameters for andrey.Markov.")
             return cls(*a, **kw)
         else:
             return cls.fromdict(msgpack.load(open(filename)))
