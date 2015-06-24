@@ -47,4 +47,4 @@ class PersistedMarkov(andrey.Markov):
                 raise NoSuchFileError("You attempted to restore and did not supply parameters for andrey.Markov.")
             return cls(*a, **kw)
         else:
-            return cls.fromdict(msgpack.load(open(filename)))
+            return cls.fromdict(msgpack.Unpacker(open(filename), encoding='utf-8').next())

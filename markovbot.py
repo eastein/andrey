@@ -6,8 +6,6 @@ import time
 import optparse
 import random
 import persist
-import msgpack
-import os.path
 
 SAVE_WINDOW = 300.0
 

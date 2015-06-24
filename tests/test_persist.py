@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import unittest
 import persist
 import shutil
@@ -37,3 +39,17 @@ class PersistTests(unittest.TestCase):
         m = persist.PersistedMarkov.restore(fn, 1, 1)
         m.teach("HELLO WORLD")
         self.assertEquals(m.choose("HELLO"), "WORLD")
+
+    def test_unicode_persists_no_crash_on_restore(self):
+        test_string = u"unicode unicode unicode DOOM 统一的unicode的unico de肯定会 杀了你的 下场。你的 生活将 被没收"
+        expected_result = u"unicode DOOM 统一的unicode的unico de肯定会 杀了你的 下场。你的"
+
+        m = persist.PersistedMarkov(2, 3)
+        m.teach(test_string)
+        self.assertEquals(m.choose(u"unicode unicode", continued=1), expected_result)
+
+        fn = os.path.join(self.tempdir, 'unicode_test.mpack')
+        m.save(fn)
+
+        restored = persist.PersistedMarkov.restore(fn)
+        self.assertEquals(restored.choose(u"unicode unicode", continued=1), expected_result)
