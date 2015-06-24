@@ -102,18 +102,20 @@ class MarkovBot(mediorc.IRC):
                 r = output_filtering(r)
                 self.connection.privmsg(chan, r)
 
-        self.m.teach(txt)
-        self.save_markov()
+        if not self.read_only:
+            self.m.teach(txt)
+            self.save_markov()
 
 
 class MarkovThread(mediorc.IRCThread):
 
-    def __init__(self, args, filename=None, ratio=None, word_replace=None, word_filter=None):
+    def __init__(self, args, filename=None, ratio=None, word_replace=None, word_filter=None, read_only=False):
         self.a = args
         self.filename = filename
         self.ratio = ratio
         self.word_replace = word_replace
         self.word_filter = word_filter
+        self.read_only = read_only
 
         if filename is None:
             self.m = persist.PersistedMarkov(2, 3)
@@ -126,6 +128,7 @@ class MarkovThread(mediorc.IRCThread):
         mb = MarkovBot(*(self.a))
         mb.set_markov(self.m)
         mb.filename = self.filename
+        mb.read_only = self.read_only
         mb.ratio = self.ratio
         mb.word_replace = self.word_replace
         mb.word_filter = self.word_filter
@@ -143,6 +146,7 @@ if __name__ == '__main__':
                       help='Comma separated (no whitespace) list of words to filter by; only talk if one of these words is in the text the bot would say.')
     parser.add_option('--replace-probability', dest='replace_probability', default=1.0,
                       help="When word replace in use, replace words with only this probability.")
+    parser.add_option('--read-only', dest='read_only', action='store_true', default=False)
 
     (options, args) = parser.parse_args()
 
@@ -158,7 +162,7 @@ if __name__ == '__main__':
 
     try:
         s = MarkovThread(args, filename=options.file,
-                         ratio=float(options.ratio), word_replace=word_replace, word_filter=word_filter)
+                         ratio=float(options.ratio), word_replace=word_replace, word_filter=word_filter, read_only=options.read_only)
     except IndexError:
         print 'Bad parameters. For usage, use markovboy.py -h.'
         sys.exit(1)
