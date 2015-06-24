@@ -37,6 +37,7 @@ class MarkovBot(mediorc.IRC):
 
     def __init__(self, *a, **kw):
         mediorc.IRC.__init__(self, *(a[0:3]), **kw)
+        self.nick = a[1]
         if len(a) > 3:
             for line in open(a[3]):
                 self.m.teach(line)
@@ -67,6 +68,13 @@ class MarkovBot(mediorc.IRC):
         chan = e.target
         txt = e.arguments[0]
 
+        probability = self.ratio
+        if self.chatty:
+            chatty_pfx = '%s:' % self.nick
+            if txt.startswith(chatty_pfx):
+                probability = 1.0
+                txt = txt[len(chatty_pfx):]
+
         def output_filtering(r):
             return ' '.join([wordprocess(s, repl=self.word_replace) for s in r.split(' ')])
 
@@ -92,7 +100,7 @@ class MarkovBot(mediorc.IRC):
                     break
             return do_send
 
-        if random.random() < self.ratio:
+        if random.random() < probability:
             if self.word_filter:
                 r = generate(txt, attempts=50, acceptance_test=filter_test)
             else:
@@ -109,13 +117,14 @@ class MarkovBot(mediorc.IRC):
 
 class MarkovThread(mediorc.IRCThread):
 
-    def __init__(self, args, filename=None, ratio=None, word_replace=None, word_filter=None, read_only=False):
+    def __init__(self, args, filename=None, ratio=None, word_replace=None, word_filter=None, read_only=False, chatty=False):
         self.a = args
         self.filename = filename
         self.ratio = ratio
         self.word_replace = word_replace
         self.word_filter = word_filter
         self.read_only = read_only
+        self.chatty = chatty
 
         if filename is None:
             self.m = persist.PersistedMarkov(2, 3)
@@ -129,6 +138,7 @@ class MarkovThread(mediorc.IRCThread):
         mb.set_markov(self.m)
         mb.filename = self.filename
         mb.read_only = self.read_only
+        mb.chatty = self.chatty
         mb.ratio = self.ratio
         mb.word_replace = self.word_replace
         mb.word_filter = self.word_filter
@@ -147,6 +157,7 @@ if __name__ == '__main__':
     parser.add_option('--replace-probability', dest='replace_probability', default=1.0,
                       help="When word replace in use, replace words with only this probability.")
     parser.add_option('--read-only', dest='read_only', action='store_true', default=False)
+    parser.add_option('-c', '--chatty', dest='chatty', action='store_true', default=False)
 
     (options, args) = parser.parse_args()
 
@@ -162,7 +173,7 @@ if __name__ == '__main__':
 
     try:
         s = MarkovThread(args, filename=options.file,
-                         ratio=float(options.ratio), word_replace=word_replace, word_filter=word_filter, read_only=options.read_only)
+                         ratio=float(options.ratio), word_replace=word_replace, word_filter=word_filter, read_only=options.read_only, chatty=options.chatty)
     except IndexError:
         print 'Bad parameters. For usage, use markovboy.py -h.'
         sys.exit(1)
