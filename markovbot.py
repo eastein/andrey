@@ -69,11 +69,12 @@ class MarkovBot(mediorc.IRC):
         txt = e.arguments[0]
 
         probability = self.ratio
-        if self.chatty:
-            chatty_pfx = '%s:' % self.nick
-            if txt.startswith(chatty_pfx):
-                probability = 1.0
-                txt = txt[len(chatty_pfx):]
+        chatty_pfx = '%s:' % self.nick
+        self_addressed = txt.startswith(chatty_pfx)
+
+        if self.chatty and self_addressed:
+            probability = 1.0
+            txt = txt[len(chatty_pfx):]
 
         def output_filtering(r):
             return ' '.join([wordprocess(s, repl=self.word_replace) for s in r.split(' ')])
@@ -110,7 +111,7 @@ class MarkovBot(mediorc.IRC):
                 r = output_filtering(r)
                 self.connection.privmsg(chan, r)
 
-        if not self.read_only:
+        if not self.read_only and not self_addressed:
             self.m.teach(txt)
             self.save_markov()
 
