@@ -1,7 +1,8 @@
+from __future__ import absolute_import
 import random
 import os.path
 import msgpack
-import andrey
+from andrey import andrey
 
 
 class PersistenceError(Exception):
@@ -22,10 +23,11 @@ class PersistedMarkov(andrey.Markov):
 
     def save(self, filename):
         tfn = '%s.inprog-%d' % (filename, random.randint(1, 10000000))
-        fh = open(tfn, 'w')
+        fh = open(tfn, 'wb')
 
         try:
-            msgpack.dump(self.todict(), fh)
+            me_as_dict = self.todict()
+            msgpack.pack(me_as_dict, encoding='utf-8', stream=fh)
         finally:
             fh.close()
 
@@ -47,4 +49,6 @@ class PersistedMarkov(andrey.Markov):
                 raise NoSuchFileError("You attempted to restore and did not supply parameters for andrey.Markov.")
             return cls(*a, **kw)
         else:
-            return cls.fromdict(msgpack.Unpacker(open(filename), encoding='utf-8').next())
+            with open(filename, 'rb') as fh:
+                d = msgpack.unpack(fh, encoding='utf-8')
+            return cls.fromdict(d)

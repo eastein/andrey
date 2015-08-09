@@ -1,5 +1,5 @@
+from __future__ import absolute_import
 import random
-
 
 class ChainLink(object):
     __slots__ = ["n", "tokens"]
@@ -102,9 +102,17 @@ class Markov(object):
         :param tokens:
         :return: tuple of strings
         """
-        if isinstance(tokens, basestring):
-            tokens = tuple(tokens.split(' '))
-        return tokens
+
+        # python 3 bullshit
+        try:
+            uni = unicode
+        except:
+            uni = str
+
+        if isinstance(tokens, uni) or isinstance(tokens, str):
+            return tuple(tokens.split(' '))
+        else:
+            return tokens
 
     def teach(self, tokens):
         """
@@ -126,7 +134,7 @@ class Markov(object):
     # if continued > 0, then we assume that n >= m
     def _choose(self, tokens, continued=0):
         tokens = self.tokenize(tokens)
-        ns = range(len(tokens) + 1 - self.m)
+        ns = list(range(len(tokens) + 1 - self.m))
         random.shuffle(ns)
         for i in ns:
             ik = tokens[i:i + self.m]
