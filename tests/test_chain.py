@@ -1,7 +1,9 @@
+from __future__ import absolute_import
 import unittest
-import andrey
+from andrey import andrey
 import pprint
 import msgpack
+import io
 
 
 class MarkovTests(unittest.TestCase):
@@ -9,13 +11,13 @@ class MarkovTests(unittest.TestCase):
     def test_1chain(self):
         m = andrey.Markov(1, 1)
         m.teach('alpha beta conky diagram')
-        self.assertEquals('beta conky', m.choose('alpha', continued=1))
+        self.assertEqual('beta conky', m.choose('alpha', continued=1))
 
     def test_2chain(self):
         m = andrey.Markov(2, 2)
         m.teach('a b c d')
         m.teach('b c ddd ddd')
-        self.assertEquals('c d', m.choose('a b', continued=0))
+        self.assertEqual('c d', m.choose('a b', continued=0))
 
     def test_todict(self):
         m = andrey.Markov(1, 1)
@@ -31,11 +33,13 @@ class MarkovTests(unittest.TestCase):
             ]
         }
         actual = m.todict()
-        pprint.pprint(actual)
-        self.assertEquals(mock, actual)
+        self.assertEqual(sorted(mock.keys()), sorted(actual.keys()))
+        self.assertEqual(sorted(mock['chains']), sorted(actual['chains']))
 
     def test_1chain_simplerestore(self):
         m = andrey.Markov(1, 1)
         m.teach('alpha beta conky delta')
-        m2 = andrey.Markov.fromdict(msgpack.loads(msgpack.dumps(m.todict())))
-        self.assertEquals('beta conky', m2.choose('alpha', continued=1))
+        dump = msgpack.dumps(m.todict())
+        dic = msgpack.unpack(io.BytesIO(dump), encoding='utf-8')
+        m2 = andrey.Markov.fromdict(dic)
+        self.assertEqual('beta conky', m2.choose('alpha', continued=1))

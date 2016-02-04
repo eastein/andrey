@@ -180,7 +180,7 @@ if __name__ == '__main__':
         s = MarkovThread(args, filename=options.file,
                          ratio=float(options.ratio), word_replace=word_replace, word_filter=word_filter, read_only=options.read_only, chatty=options.chatty, chain_length=int(options.chain_length))
     except IndexError:
-        print 'Bad parameters. For usage, use markovboy.py -h.'
+        print('Bad parameters. For usage, use markovboy.py -h.')
         sys.exit(1)
 
     s.run()
