@@ -81,7 +81,7 @@ class MarkovBot(mediorc.IRC):
 
         def generate(txt, attempts=1, acceptance_test=None):
             def generate_inner(txt):
-                return self.m.choose(txt, continued=10)
+                return self.m.choose(txt, continued=self.chain_length)
             if not acceptance_test:
                 return generate_inner(txt)
             else:
@@ -118,7 +118,7 @@ class MarkovBot(mediorc.IRC):
 
 class MarkovThread(mediorc.IRCThread):
 
-    def __init__(self, args, filename=None, ratio=None, word_replace=None, word_filter=None, read_only=False, chatty=False):
+    def __init__(self, args, filename=None, ratio=None, word_replace=None, word_filter=None, read_only=False, chatty=False, chain_length=10):
         self.a = args
         self.filename = filename
         self.ratio = ratio
@@ -126,6 +126,7 @@ class MarkovThread(mediorc.IRCThread):
         self.word_filter = word_filter
         self.read_only = read_only
         self.chatty = chatty
+        self.chain_length = chain_length
 
         if filename is None:
             self.m = persist.PersistedMarkov(2, 3)
@@ -143,6 +144,7 @@ class MarkovThread(mediorc.IRCThread):
         mb.ratio = self.ratio
         mb.word_replace = self.word_replace
         mb.word_filter = self.word_filter
+        mb.chain_length = self.chain_length
         return mb
 
 if __name__ == '__main__':
@@ -159,6 +161,8 @@ if __name__ == '__main__':
                       help="When word replace in use, replace words with only this probability.")
     parser.add_option('--read-only', dest='read_only', action='store_true', default=False)
     parser.add_option('-c', '--chatty', dest='chatty', action='store_true', default=False)
+    parser.add_option('-l', '--length', dest='chain_length', default='10',
+                      help='How many chain lengths to use when talking.')
 
     (options, args) = parser.parse_args()
 
@@ -174,7 +178,7 @@ if __name__ == '__main__':
 
     try:
         s = MarkovThread(args, filename=options.file,
-                         ratio=float(options.ratio), word_replace=word_replace, word_filter=word_filter, read_only=options.read_only, chatty=options.chatty)
+                         ratio=float(options.ratio), word_replace=word_replace, word_filter=word_filter, read_only=options.read_only, chatty=options.chatty, chain_length=int(options.chain_length))
     except IndexError:
         print 'Bad parameters. For usage, use markovboy.py -h.'
         sys.exit(1)
