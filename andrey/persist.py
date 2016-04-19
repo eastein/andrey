@@ -2,7 +2,7 @@ from __future__ import absolute_import
 import random
 import os.path
 import msgpack
-from andrey import andrey
+import andrey.markov
 
 
 class PersistenceError(Exception):
@@ -19,7 +19,7 @@ class NoSuchFileError(Exception):
     """
 
 
-class PersistedMarkov(andrey.Markov):
+class PersistedMarkov(andrey.markov.Markov):
 
     def save(self, filename):
         tfn = '%s.inprog-%d' % (filename, random.randint(1, 10000000))
@@ -40,9 +40,9 @@ class PersistedMarkov(andrey.Markov):
         """
         If file exists, load and ignore other parameters. If file does not exist, create using parameters.
         :param filename: filename to attempt to load from
-        :param a: arguments to andrey.Markov constructor
-        :param kw: keyword arguments to andrey.Markov constructor
-        :return: andrey.Markov.PersistedMarkov instance
+        :param a: arguments to andrey.markov.Markov constructor
+        :param kw: keyword arguments to andrey.markov.Markov constructor
+        :return: andrey.persist.PersistedMarkov instance
         """
         if not os.path.exists(filename):
             if not a:
