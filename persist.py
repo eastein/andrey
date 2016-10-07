@@ -1,7 +1,9 @@
-import random
 import os.path
+import random
+
 import msgpack
-import markov
+
+from andrey import markov
 
 
 class PersistenceError(Exception):

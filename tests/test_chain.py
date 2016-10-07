@@ -1,7 +1,9 @@
-import unittest
-import markov
 import pprint
+import unittest
+
 import msgpack
+
+from andrey import markov
 
 
 class MarkovTests(unittest.TestCase):
