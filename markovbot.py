@@ -1,11 +1,13 @@
 #!/usr/bin/env python
 
-import sys
-import mediorc
-import time
 import optparse
 import random
-import persist
+import sys
+import time
+
+import mediorc
+
+from andrey import persist
 
 SAVE_WINDOW = 300.0
 

@@ -1,6 +1,7 @@
 #!/usr/bin/env python
-import persist
 import sys
+
+from andrey import persist
 
 if __name__ == '__main__':
     f, t = (2, 3)

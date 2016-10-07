@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 
-import unittest
-import persist
+import os.path
 import shutil
 import tempfile
-import os.path
+import unittest
+
+from andrey import persist
 
 
 class PersistTests(unittest.TestCase):
