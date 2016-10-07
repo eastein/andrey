@@ -1,4 +1,7 @@
+from __future__ import absolute_import
 import random
+import six
+from six.moves import range
 
 
 class ChainLink(object):
@@ -102,7 +105,7 @@ class Markov(object):
         :param tokens:
         :return: tuple of strings
         """
-        if isinstance(tokens, basestring):
+        if isinstance(tokens, six.string_types):
             tokens = tuple(tokens.split(' '))
         return tokens
 
@@ -126,7 +129,7 @@ class Markov(object):
     # if continued > 0, then we assume that n >= m
     def _choose(self, tokens, continued=0):
         tokens = self.tokenize(tokens)
-        ns = range(len(tokens) + 1 - self.m)
+        ns = list(range(len(tokens) + 1 - self.m))
         random.shuffle(ns)
         for i in ns:
             ik = tokens[i:i + self.m]

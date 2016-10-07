@@ -9,5 +9,5 @@ setup(name='andrey',
       author_email='toba@des.truct.org',
       url='https://github.com/eastein/andrey/',
       packages=['andrey'],
-      install_requires=['msgpack-python']
+      install_requires=['msgpack-python', 'six']
      )
