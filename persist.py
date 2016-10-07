@@ -1,7 +1,7 @@
 import random
 import os.path
 import msgpack
-import andrey
+import markov
 
 
 class PersistenceError(Exception):
@@ -18,7 +18,7 @@ class NoSuchFileError(Exception):
     """
 
 
-class PersistedMarkov(andrey.Markov):
+class PersistedMarkov(markov.Markov):
 
     def save(self, filename):
         tfn = '%s.inprog-%d' % (filename, random.randint(1, 10000000))
