@@ -25,7 +25,7 @@ class PersistedMarkov(markov.Markov):
 
     def save(self, filename):
         tfn = '%s.inprog-%d' % (filename, random.randint(1, 10000000))
-        fh = open(tfn, 'w')
+        fh = open(tfn, 'wb')
 
         try:
             msgpack.dump(self.todict(), fh)
@@ -50,4 +50,4 @@ class PersistedMarkov(markov.Markov):
                 raise NoSuchFileError("You attempted to restore and did not supply parameters for andrey.Markov.")
             return cls(*a, **kw)
         else:
-            return cls.fromdict(next(msgpack.Unpacker(open(filename), encoding='utf-8')))
+            return cls.fromdict(next(msgpack.Unpacker(open(filename, mode='rb'), encoding='utf-8')))
